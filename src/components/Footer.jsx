@@ -11,29 +11,29 @@ export default function Footer() {
       
       {/* Value Proposition Highlights */}
       <div className="max-w-7xl mx-auto px-4 py-10 border-b border-slate-900 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/60">
+        <div className="flex min-w-0 items-center gap-4 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/60">
           <div className="p-3 rounded-xl bg-indigo-500/10 text-indigo-400">
             <Truck className="w-6 h-6" />
           </div>
-          <div>
+          <div className="min-w-0">
             <h4 className="text-white font-semibold text-base">Express Delivery</h4>
             <p className="text-xs text-slate-400">Cash on Delivery (COD +100) or Online Payment</p>
           </div>
         </div>
-        <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/60">
+        <div className="flex min-w-0 items-center gap-4 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/60">
           <div className="p-3 rounded-xl bg-pink-500/10 text-pink-400">
             <ShieldCheck className="w-6 h-6" />
           </div>
-          <div>
+          <div className="min-w-0">
             <h4 className="text-white font-semibold text-base">Authentic Quality</h4>
             <p className="text-xs text-slate-400">100% Verified premium products & warranty</p>
           </div>
         </div>
-        <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/60">
+        <div className="flex min-w-0 items-center gap-4 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/60">
           <div className="p-3 rounded-xl bg-purple-500/10 text-purple-400">
             <RefreshCw className="w-6 h-6" />
           </div>
-          <div>
+          <div className="min-w-0">
             <h4 className="text-white font-semibold text-base">Easy Order Cancellation</h4>
             <p className="text-xs text-slate-400">Cancel anytime before shipment dispatch</p>
           </div>
@@ -52,7 +52,7 @@ export default function Footer() {
               {storeConfig.navbarLogoText || 'LuxeStore'}
             </span>
           </div>
-          <p className="text-xs leading-relaxed text-slate-400">
+          <p className="break-safe text-xs leading-relaxed text-slate-400">
             {storeConfig.aboutUsContent || 'Next-Gen E-Commerce experience built with modern visual engineering and fast order processing.'}
           </p>
         </div>
@@ -84,11 +84,11 @@ export default function Footer() {
           <h4 className="text-white font-bold mb-4">Contact Info</h4>
           <div className="flex items-center gap-3">
             <Mail className="w-4 h-4 text-indigo-400 shrink-0" />
-            <span>{storeConfig.contactEmail || 'support@luxestore.com'}</span>
+            <span className="break-safe">{storeConfig.contactEmail || 'support@luxestore.com'}</span>
           </div>
           <div className="flex items-center gap-3">
             <Phone className="w-4 h-4 text-indigo-400 shrink-0" />
-            <span>{storeConfig.contactPhone || '+1 (800) 555-LUXE'}</span>
+            <span className="break-safe">{storeConfig.contactPhone || '+1 (800) 555-LUXE'}</span>
           </div>
           <div className="flex items-center gap-3">
             <MapPin className="w-4 h-4 text-indigo-400 shrink-0" />

@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AdminNav from './components/AdminNav';
 import ScrollToTop from './components/ScrollToTop';
+import PageLoader from './components/PageLoader';
 
 // Customer Pages
 import Home from './pages/Home';
@@ -25,6 +26,7 @@ import AdminUsers from './pages/admin/AdminUsers';
 import AdminCustomize from './pages/admin/AdminCustomize';
 
 import { useAuth } from './context/AuthContext';
+import { useStore } from './context/StoreContext';
 
 // Protected Route Component: Requires login (and optionally Admin role)
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
@@ -72,19 +74,26 @@ const PublicOnlyRoute = ({ children }) => {
 
 export default function App() {
   const location = useLocation();
+  const { loadingConfig } = useStore();
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
   const isAdminPage = location.pathname.startsWith('/admin');
 
+  // Store configuration controls the theme, navigation and page content. Do not
+  // render the shell with temporary defaults and then replace it after the API responds.
+  if (loadingConfig) {
+    return <PageLoader label="Preparing your shopping experience..." />;
+  }
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen min-w-0 flex-col overflow-x-clip">
       {/* Scroll to Top on every page navigation */}
       <ScrollToTop />
 
       {/* Show AdminNav on Admin routes; Show Customer Navbar on Storefront routes; Hide both on Login/Register */}
       {!isAuthPage && (isAdminPage ? <AdminNav /> : <Navbar />)}
 
-      <main className="flex-1">
+      <main className="min-w-0 flex-1">
         <Routes>
           {/* Public Customer Routes */}
           <Route path="/" element={<Home />} />

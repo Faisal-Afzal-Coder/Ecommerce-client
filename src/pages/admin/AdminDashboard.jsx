@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useStore } from '../../context/StoreContext';
+import PageLoader from '../../components/PageLoader';
 import { 
   ShoppingBag, 
   DollarSign, 
@@ -45,6 +46,10 @@ export default function AdminDashboard() {
   };
 
   const hasSales = stats && stats.topSellingProducts && stats.topSellingProducts.length > 0 && stats.topSellingProducts[0].salesCount > 0;
+
+  if (loading) {
+    return <PageLoader label="Loading dashboard analytics..." />;
+  }
 
   return (
     <div className={`min-h-screen ${activeTheme.bg} transition-colors duration-300 py-6 px-4 max-w-7xl mx-auto space-y-8`}>
@@ -97,12 +102,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {loading ? (
-        <div className="flex justify-center py-20">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      ) : (
-        <div className="space-y-8">
+      <div className="space-y-8">
           
           {/* STAT CARDS GRID */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -228,8 +228,7 @@ export default function AdminDashboard() {
             )}
           </div>
 
-        </div>
-      )}
+      </div>
 
     </div>
   );

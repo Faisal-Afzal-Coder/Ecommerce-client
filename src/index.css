@@ -2,6 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Keep transformed/animated content and long API-driven text from widening the page on mobile. */
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  background: #020617;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+input,
+select,
+textarea,
+button {
+  max-width: 100%;
+}
+
+/* Dynamic announcements, product names and URLs must wrap on narrow viewports. */
+.break-safe {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 @layer utilities {
   .glass-panel {
     background: rgba(15, 23, 42, 0.75);

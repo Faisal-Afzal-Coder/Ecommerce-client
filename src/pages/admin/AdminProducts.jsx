@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useStore } from '../../context/StoreContext';
+import PageLoader from '../../components/PageLoader';
 import { 
   Package, 
   Plus, 
@@ -133,6 +134,10 @@ export default function AdminProducts() {
     }
   };
 
+  if (loading) {
+    return <PageLoader label="Loading inventory..." />;
+  }
+
   return (
     <div className={`min-h-screen ${activeTheme.bg} transition-colors duration-300 py-6 px-4 max-w-7xl mx-auto space-y-8`}>
       
@@ -164,12 +169,7 @@ export default function AdminProducts() {
         </div>
       )}
 
-      {loading ? (
-        <div className="flex justify-center py-20">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      ) : (
-        <div className="glass-panel rounded-3xl border border-slate-800 overflow-hidden">
+      <div className="glass-panel rounded-3xl border border-slate-800 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-900/90 text-slate-400 uppercase font-bold border-b border-slate-800">
@@ -235,8 +235,7 @@ export default function AdminProducts() {
               </tbody>
             </table>
           </div>
-        </div>
-      )}
+      </div>
 
       {/* ADD / EDIT PRODUCT MODAL */}
       {isModalOpen && (

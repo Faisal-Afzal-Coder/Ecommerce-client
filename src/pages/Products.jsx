@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { useStore } from '../context/StoreContext';
+import PageLoader from '../components/PageLoader';
 import { Search, Filter, ShoppingBag, Star, CheckCircle, AlertCircle, ArrowUpDown } from 'lucide-react';
 
 export default function Products() {
@@ -41,6 +42,10 @@ export default function Products() {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return <PageLoader label="Loading products..." />;
+  }
 
   return (
     <div className={`min-h-screen ${activeTheme.bg} transition-colors duration-300 py-12 px-4 max-w-7xl mx-auto space-y-8`}>
@@ -129,11 +134,7 @@ export default function Products() {
       </div>
 
       {/* PRODUCT GRID */}
-      {loading ? (
-        <div className="flex justify-center py-20">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      ) : products.length === 0 ? (
+      {products.length === 0 ? (
         <div className="text-center py-20 glass-panel rounded-3xl border border-slate-800 space-y-4">
           <AlertCircle className="w-12 h-12 text-slate-500 mx-auto" />
           <h3 className="text-xl font-bold text-white">No products found</h3>

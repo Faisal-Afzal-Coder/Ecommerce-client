@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useStore } from '../context/StoreContext';
+import PageLoader from '../components/PageLoader';
 import { 
   ShoppingBag, 
   ArrowRight, 
@@ -116,6 +117,10 @@ export default function Home() {
   const displayBgImage = isEditing ? editForm.heroBgImage : storeConfig.heroBgImage;
   const displayVipTitle = isEditing ? editForm.vipSectionTitle : storeConfig.vipSectionTitle;
   const displayVipSubtitle = isEditing ? editForm.vipSectionSubtitle : storeConfig.vipSectionSubtitle;
+
+  if (loadingVip) {
+    return <PageLoader label="Loading featured products..." />;
+  }
 
   return (
     <div className={`min-h-screen ${activeTheme.bg} transition-colors duration-300 relative pb-20`}>

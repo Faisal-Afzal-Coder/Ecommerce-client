@@ -39,22 +39,22 @@ export default function Navbar() {
     <>
       {/* Dynamic Announcement Top Bar */}
       {storeConfig.showAnnouncement && storeConfig.announcementText && (
-        <div className={`py-2 px-4 text-center text-xs font-semibold tracking-wide ${activeTheme.announcementBg} flex items-center justify-center gap-2 transition-colors duration-300`}>
+        <div className={`break-safe py-2 px-4 text-center text-xs font-semibold tracking-wide ${activeTheme.announcementBg} flex items-center justify-center gap-2 transition-colors duration-300`}>
           <Megaphone className="w-3.5 h-3.5 shrink-0 animate-bounce" />
-          <span>{storeConfig.announcementText}</span>
+          <span className="min-w-0">{storeConfig.announcementText}</span>
         </div>
       )}
 
       <nav className={`sticky top-0 z-50 glass-panel border-b ${activeTheme.border} transition-colors duration-300`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex min-w-0 items-center justify-between h-20">
             
             {/* Brand Logo */}
-            <Link to="/" className="flex items-center gap-3 group">
+            <Link to="/" className="flex min-w-0 items-center gap-3 group">
               <div className={`w-10 h-10 rounded-xl ${activeTheme.primaryBtn} flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300`}>
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span className={`text-2xl font-extrabold tracking-tight text-white ${activeTheme.accentHover} transition-colors`}>
+              <span className={`min-w-0 truncate text-2xl font-extrabold tracking-tight text-white ${activeTheme.accentHover} transition-colors`}>
                 {storeConfig.navbarLogoText || 'LuxeStore'}
               </span>
             </Link>

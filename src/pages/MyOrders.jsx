@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useStore } from '../context/StoreContext';
+import PageLoader from '../components/PageLoader';
 import { 
   Package, 
   Clock, 
@@ -72,6 +73,10 @@ export default function MyOrders() {
 
   const statusSteps = ['Pending', 'Processing', 'Shipped', 'Delivered'];
 
+  if (loading) {
+    return <PageLoader label="Loading your orders..." />;
+  }
+
   return (
     <div className={`min-h-screen ${activeTheme.bg} transition-colors duration-300 py-12 px-4 max-w-7xl mx-auto space-y-8`}>
       
@@ -104,11 +109,7 @@ export default function MyOrders() {
         </div>
       )}
 
-      {loading ? (
-        <div className="flex justify-center py-20">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      ) : orders.length === 0 ? (
+      {orders.length === 0 ? (
         <div className="glass-panel p-16 rounded-3xl border border-slate-800 text-center space-y-4">
           <Package className="w-16 h-16 text-slate-600 mx-auto" />
           <h2 className="text-2xl font-bold text-white">No Orders Found</h2>
