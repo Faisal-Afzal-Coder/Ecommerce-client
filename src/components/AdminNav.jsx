@@ -29,21 +29,21 @@ export default function AdminNav() {
   return (
     <div className="glass-panel border-b border-slate-800 sticky top-0 z-50 mb-8 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex min-w-0 items-center justify-between gap-2 h-20">
           
           {/* Brand & Admin Badge */}
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-pink-600/30">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xl font-black tracking-tight text-white">Store Admin Panel</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-pink-500/20 text-pink-300 border border-pink-500/30">
+            <div className="min-w-0">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="truncate text-base font-black tracking-tight text-white sm:text-xl">Store Admin Panel</span>
+                <span className="hidden sm:inline px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-pink-500/20 text-pink-300 border border-pink-500/30">
                   Manager
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400">Logged in as {user?.name || 'Administrator'}</p>
+              <p className="hidden sm:block text-[11px] text-slate-400">Logged in as {user?.name || 'Administrator'}</p>
             </div>
           </div>
 
@@ -71,14 +71,16 @@ export default function AdminNav() {
           </div>
 
           {/* Right Action Buttons */}
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
             {/* View Customer Storefront Button */}
             <Link
               to="/"
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 border border-slate-700 text-slate-200 hover:text-white hover:border-slate-500 shadow-md transition-all hover:scale-105"
+              aria-label="View customer storefront"
+              title="View customer storefront"
+              className="flex items-center gap-2 p-2 sm:px-4 sm:py-2 rounded-xl text-xs font-bold bg-slate-900 border border-slate-700 text-slate-200 hover:text-white hover:border-slate-500 shadow-md transition-all hover:scale-105"
             >
               <Eye className="w-4 h-4 text-emerald-400" />
-              <span>Customer Storefront View</span>
+              <span className="hidden md:inline">Customer Storefront View</span>
             </Link>
 
             {/* Logout Button */}

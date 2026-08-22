@@ -14,6 +14,7 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [existingAccount, setExistingAccount] = useState(false);
 
   const passwordRequirements = [
     { label: 'At least 8 characters', met: password.length >= 8 },
@@ -33,6 +34,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
+    setExistingAccount(false);
 
     if (!isStrongPassword) {
       setErrorMsg('Please meet all password requirements before creating your account.');
@@ -50,6 +52,7 @@ export default function Register() {
       navigate('/');
     } else {
       setErrorMsg(res.message);
+      setExistingAccount(/already exists/i.test(res.message));
     }
   };
 
@@ -82,7 +85,17 @@ export default function Register() {
         {errorMsg && (
           <div className="p-3 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-semibold flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{errorMsg}</span>
+            <span>
+              {errorMsg}
+              {existingAccount && (
+                <>
+                  {' '}
+                  <Link to="/login" className="font-bold text-white underline underline-offset-2 hover:text-indigo-200">
+                    Sign in instead
+                  </Link>
+                </>
+              )}
+            </span>
           </div>
         )}
 

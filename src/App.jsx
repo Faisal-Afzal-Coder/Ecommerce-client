@@ -74,6 +74,7 @@ const PublicOnlyRoute = ({ children }) => {
 
 export default function App() {
   const location = useLocation();
+  const { authReady } = useAuth();
   const { loadingConfig } = useStore();
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
@@ -81,7 +82,7 @@ export default function App() {
 
   // Store configuration controls the theme, navigation and page content. Do not
   // render the shell with temporary defaults and then replace it after the API responds.
-  if (loadingConfig) {
+  if (!authReady || loadingConfig) {
     return <PageLoader label="Preparing your shopping experience..." />;
   }
 

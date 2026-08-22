@@ -94,7 +94,7 @@ export default function AdminUsers() {
                   <th className="p-4">Role</th>
                   <th className="p-4">Status</th>
                   <th className="p-4">Joined Date</th>
-                  <th className="p-4 text-right">Actions</th>
+                  <th className="sticky right-0 z-10 bg-slate-900/95 p-4 text-right shadow-[-8px_0_12px_-10px_rgba(0,0,0,0.9)]">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 text-slate-300">
@@ -132,7 +132,7 @@ export default function AdminUsers() {
                     <td className="p-4 text-slate-400">
                       {new Date(usr.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="p-4 text-right">
+                    <td className="sticky right-0 z-10 bg-slate-950 p-4 text-right shadow-[-8px_0_12px_-10px_rgba(0,0,0,0.9)]">
                       {usr._id === currentUser._id ? (
                         <span className="text-slate-500 text-[11px] italic font-semibold">Your Account</span>
                       ) : usr.role === 'admin' ? (
@@ -160,7 +160,9 @@ export default function AdminUsers() {
 
                           <button
                             onClick={() => handleDeleteUser(usr._id)}
-                            className="p-1.5 rounded-xl bg-slate-900 border border-slate-800 text-rose-400 hover:text-white"
+                            aria-label={`Delete ${usr.name}`}
+                            title="Delete user"
+                            className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500/20 hover:text-white"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>

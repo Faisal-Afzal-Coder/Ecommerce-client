@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const AuthContext = createContext();
 
@@ -14,6 +15,7 @@ export const AuthProvider = ({ children }) => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
 
   // Set default axios header
   useEffect(() => {
@@ -22,6 +24,7 @@ export const AuthProvider = ({ children }) => {
     } else {
       delete axios.defaults.headers.common['Authorization'];
     }
+    setAuthReady(true);
   }, [token]);
 
   const login = async (email, password) => {
@@ -70,6 +73,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user_info');
     localStorage.removeItem('auth_token');
     delete axios.defaults.headers.common['Authorization'];
+    toast.success('You have been signed out successfully.');
   };
 
   const updateUserProfile = async (profileData) => {
@@ -108,6 +112,7 @@ export const AuthProvider = ({ children }) => {
         user,
         token,
         loading,
+        authReady,
         isAdmin: user?.role === 'admin',
         login,
         register,

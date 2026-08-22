@@ -179,7 +179,7 @@ export default function AdminProducts() {
                   <th className="p-4">Price</th>
                   <th className="p-4">Stock</th>
                   <th className="p-4">VIP Item</th>
-                  <th className="p-4 text-right">Actions</th>
+                  <th className="sticky right-0 z-10 bg-slate-900/95 p-4 text-right shadow-[-8px_0_12px_-10px_rgba(0,0,0,0.9)]">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 text-slate-300">
@@ -214,7 +214,7 @@ export default function AdminProducts() {
                         <span className="text-slate-500">Standard</span>
                       )}
                     </td>
-                    <td className="p-4 text-right">
+                    <td className="sticky right-0 z-10 bg-slate-950 p-4 text-right shadow-[-8px_0_12px_-10px_rgba(0,0,0,0.9)]">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleOpenEditModal(product)}
@@ -224,7 +224,9 @@ export default function AdminProducts() {
                         </button>
                         <button
                           onClick={() => handleDelete(product._id)}
-                          className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-rose-400 hover:text-white"
+                          aria-label={`Delete ${product.name}`}
+                          title="Delete product"
+                          className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500/20 hover:text-white"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

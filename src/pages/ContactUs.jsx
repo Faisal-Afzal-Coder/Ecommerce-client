@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
+import { toast } from 'react-toastify';
 import { Mail, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react';
 
 export default function ContactUs() {
@@ -11,6 +12,7 @@ export default function ContactUs() {
     e.preventDefault();
     setSubmitted(true);
     setForm({ name: '', email: '', message: '' });
+    toast.success('Your message has been sent successfully.');
   };
 
   return (
