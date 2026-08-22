@@ -15,6 +15,14 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
+  const passwordRequirements = [
+    { label: 'At least 8 characters', met: password.length >= 8 },
+    { label: 'One uppercase letter (A-Z)', met: /[A-Z]/.test(password) },
+    { label: 'One lowercase letter (a-z)', met: /[a-z]/.test(password) },
+    { label: 'One special character (! @ # $ etc.)', met: /[^A-Za-z0-9\s]/.test(password) }
+  ];
+  const isStrongPassword = passwordRequirements.every((requirement) => requirement.met);
+
   // If already authenticated, prevent accessing register page
   useEffect(() => {
     if (user) {
@@ -26,8 +34,8 @@ export default function Register() {
     e.preventDefault();
     setErrorMsg('');
 
-    if (password.length < 6) {
-      setErrorMsg('Password must be at least 6 characters long');
+    if (!isStrongPassword) {
+      setErrorMsg('Please meet all password requirements before creating your account.');
       return;
     }
 
@@ -118,9 +126,29 @@ export default function Register() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Minimum 6 characters"
+                placeholder="Create a strong password"
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white focus:outline-none focus:border-indigo-500"
               />
+            </div>
+            <div className="mt-3 rounded-xl border border-slate-800 bg-slate-950/50 p-3 space-y-2">
+              <p className="text-[11px] font-semibold text-slate-300">Your password must include:</p>
+              <ul className="space-y-1.5" aria-live="polite">
+                {passwordRequirements.map((requirement) => (
+                  <li
+                    key={requirement.label}
+                    className={`flex items-center gap-2 text-[11px] transition-colors ${
+                      requirement.met ? 'text-emerald-400' : 'text-slate-500'
+                    }`}
+                  >
+                    {requirement.met ? (
+                      <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    ) : (
+                      <span className="h-4 w-4 shrink-0 rounded-full border border-slate-600" aria-hidden="true" />
+                    )}
+                    <span>{requirement.label}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
 
@@ -141,7 +169,7 @@ export default function Register() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !isStrongPassword}
             className={`w-full py-3 rounded-xl ${activeTheme.primaryBtn} font-bold text-sm shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 transition-all`}
           >
             <UserPlus className="w-4 h-4" />
