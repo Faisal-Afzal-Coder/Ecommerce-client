@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useStore } from '../context/StoreContext';
-import { Sparkles, Mail, Lock, LogIn, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Sparkles, Mail, Lock, LogIn, AlertCircle, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 export default function Login() {
   const { user, isAdmin, login, loading } = useAuth();
@@ -59,6 +59,13 @@ export default function Login() {
           </h2>
           <p className="text-xs text-slate-400">Welcome back to {storeConfig.navbarLogoText || 'LuxeStore'}</p>
         </div>
+
+        {location.state?.successMessage && (
+          <div className="p-3.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <span>{location.state.successMessage}</span>
+          </div>
+        )}
 
         {errorMsg && (
           <div className="p-3 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-semibold flex items-center gap-2">

@@ -2,12 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useStore } from '../context/StoreContext';
-import { Sparkles, User, Mail, Lock, UserPlus, AlertCircle, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { 
+  Sparkles, 
+  User, 
+  Mail, 
+  Lock, 
+  UserPlus, 
+  AlertCircle, 
+  ArrowLeft, 
+  CheckCircle2,
+  ArrowRight
+} from 'lucide-react';
 import TurnstileWidget from '../components/TurnstileWidget';
-import OtpModal from '../components/OtpModal';
 
 export default function Register() {
-  const { user, requestSignupOtp, verifySignupOtp, loading } = useAuth();
+  const { user, requestSignupOtp, loading } = useAuth();
   const { storeConfig, activeTheme } = useStore();
   const navigate = useNavigate();
 
@@ -18,11 +27,6 @@ export default function Register() {
   const [captchaToken, setCaptchaToken] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [existingAccount, setExistingAccount] = useState(false);
-
-  // OTP Modal State
-  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
-  const [otpVerifyLoading, setOtpVerifyLoading] = useState(false);
-  const [otpError, setOtpError] = useState('');
 
   const passwordRequirements = [
     { label: 'At least 8 characters', met: password.length >= 8 },
@@ -54,36 +58,21 @@ export default function Register() {
       return;
     }
 
-    // Request OTP from backend (validates fields, checks existing email, verifies Turnstile)
+    // Request 6-digit OTP code from server
     const res = await requestSignupOtp(name, email, password, confirmPassword, captchaToken);
+    
     if (res.success) {
-      setOtpError('');
-      setIsOtpModalOpen(true);
+      // Direct navigation to dedicated /verify-otp page!
+      navigate('/verify-otp', {
+        state: {
+          name,
+          email,
+          password
+        }
+      });
     } else {
       setErrorMsg(res.message);
       setExistingAccount(/already exists/i.test(res.message));
-    }
-  };
-
-  const handleVerifyOtp = async (otpCode) => {
-    setOtpVerifyLoading(true);
-    setOtpError('');
-
-    const res = await verifySignupOtp(name, email, password, otpCode);
-    setOtpVerifyLoading(false);
-
-    if (res.success) {
-      setIsOtpModalOpen(false);
-      navigate('/');
-    } else {
-      setOtpError(res.message);
-    }
-  };
-
-  const handleResendOtp = async () => {
-    const res = await requestSignupOtp(name, email, password, confirmPassword, captchaToken);
-    if (!res.success) {
-      throw new Error(res.message);
     }
   };
 
@@ -101,20 +90,20 @@ export default function Register() {
         </Link>
       </div>
 
-      <div className="max-w-md w-full glass-panel p-8 sm:p-10 rounded-3xl border border-slate-800 space-y-6 shadow-2xl relative">
+      <div className="max-w-md w-full glass-panel p-8 sm:p-10 rounded-3xl border border-slate-800 space-y-6 shadow-2xl relative animate-fade-in">
         
         <div className="text-center space-y-2">
           <div className={`w-12 h-12 rounded-2xl ${activeTheme.primaryBtn} flex items-center justify-center mx-auto shadow-lg`}>
             <Sparkles className="w-6 h-6 text-white" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             Create Account
-          </h2>
+          </h1>
           <p className="text-xs text-slate-400">Join {storeConfig.navbarLogoText || 'LuxeStore'} today with verified email</p>
         </div>
 
         {errorMsg && (
-          <div className="p-3 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-semibold flex items-center gap-2">
+          <div className="p-3.5 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-semibold flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>
               {errorMsg}
@@ -176,7 +165,7 @@ export default function Register() {
             </div>
             <div className="mt-3 rounded-xl border border-slate-800 bg-slate-950/50 p-3 space-y-2">
               <p className="text-[11px] font-semibold text-slate-300">Your password must include:</p>
-              <ul className="space-y-1.5" aria-live="polite">
+              <ul className="space-y-1.5">
                 {passwordRequirements.map((requirement) => (
                   <li
                     key={requirement.label}
@@ -185,9 +174,9 @@ export default function Register() {
                     }`}
                   >
                     {requirement.met ? (
-                      <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+                      <CheckCircle2 className="h-4 w-4 shrink-0" />
                     ) : (
-                      <span className="h-4 w-4 shrink-0 rounded-full border border-slate-600" aria-hidden="true" />
+                      <span className="h-4 w-4 shrink-0 rounded-full border border-slate-600" />
                     )}
                     <span>{requirement.label}</span>
                   </li>
@@ -221,10 +210,11 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading || !isStrongPassword}
-            className={`w-full py-3 rounded-xl ${activeTheme.primaryBtn} font-bold text-sm shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 transition-all`}
+            className={`w-full py-3.5 rounded-xl ${activeTheme.primaryBtn} font-bold text-sm shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 transition-all`}
           >
             <UserPlus className="w-4 h-4" />
-            <span>{loading ? 'Sending Verification Code...' : 'Continue with Verification'}</span>
+            <span>{loading ? 'Sending Verification Code...' : 'Create Account & Send Code'}</span>
+            <ArrowRight className="w-4 h-4" />
           </button>
         </form>
 
@@ -236,20 +226,6 @@ export default function Register() {
         </div>
 
       </div>
-
-      {/* 6-Digit Email OTP Verification Dialog */}
-      <OtpModal
-        isOpen={isOtpModalOpen}
-        onClose={() => setIsOtpModalOpen(false)}
-        email={email}
-        title="Verify Your Registration"
-        subtitle="We have sent a 6-digit code to"
-        onVerify={handleVerifyOtp}
-        onResend={handleResendOtp}
-        loading={otpVerifyLoading}
-        error={otpError}
-      />
-
     </div>
   );
 }

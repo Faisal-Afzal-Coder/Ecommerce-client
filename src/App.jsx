@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import AdminNav from './components/AdminNav';
 import ScrollToTop from './components/ScrollToTop';
 import PageLoader from './components/PageLoader';
+import WhatsAppWidget from './components/WhatsAppWidget';
 
 // Customer Pages
 import Home from './pages/Home';
@@ -18,6 +19,8 @@ import ContactUs from './pages/ContactUs';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
+import VerifyOtp from './pages/VerifyOtp';
+import ResetPassword from './pages/ResetPassword';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -80,7 +83,7 @@ export default function App() {
   const { authReady } = useAuth();
   const { loadingConfig } = useStore();
 
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/forgot-password';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/forgot-password' || location.pathname === '/verify-otp' || location.pathname === '/reset-password';
   const isAdminPage = location.pathname.startsWith('/admin');
 
   // Store configuration controls the theme, navigation and page content. Do not
@@ -124,10 +127,26 @@ export default function App() {
             }
           />
           <Route
+            path="/verify-otp"
+            element={
+              <PublicOnlyRoute>
+                <VerifyOtp />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
             path="/forgot-password"
             element={
               <PublicOnlyRoute>
                 <ForgotPassword />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/reset-password"
+            element={
+              <PublicOnlyRoute>
+                <ResetPassword />
               </PublicOnlyRoute>
             }
           />
@@ -220,6 +239,9 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
+
+      {/* Floating WhatsApp Support Widget on Customer Storefront */}
+      {!isAdminPage && <WhatsAppWidget />}
 
       {/* Hide Customer Footer on Login/Register and Admin Pages */}
       {!isAuthPage && !isAdminPage && <Footer />}
