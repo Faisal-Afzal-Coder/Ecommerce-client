@@ -27,10 +27,10 @@ export const AuthProvider = ({ children }) => {
     setAuthReady(true);
   }, [token]);
 
-  const login = async (email, password) => {
+  const login = async (email, password, captchaToken = null) => {
     setLoading(true);
     try {
-      const res = await axios.post('/api/auth/login', { email, password });
+      const res = await axios.post('/api/auth/login', { email, password, captchaToken });
       const userData = res.data;
       setUser(userData);
       setToken(userData.token);
@@ -43,6 +43,90 @@ export const AuthProvider = ({ children }) => {
       return {
         success: false,
         message: error.response?.data?.message || 'Login failed'
+      };
+    }
+  };
+
+  const requestSignupOtp = async (name, email, password, confirmPassword, captchaToken) => {
+    setLoading(true);
+    try {
+      const res = await axios.post('/api/auth/register/request-otp', {
+        name,
+        email,
+        password,
+        confirmPassword,
+        captchaToken
+      });
+      setLoading(false);
+      return { success: true, message: res.data.message };
+    } catch (error) {
+      setLoading(false);
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to send verification code'
+      };
+    }
+  };
+
+  const verifySignupOtp = async (name, email, password, otp) => {
+    setLoading(true);
+    try {
+      const res = await axios.post('/api/auth/register/verify-otp', {
+        name,
+        email,
+        password,
+        otp
+      });
+      const userData = res.data;
+      setUser(userData);
+      setToken(userData.token);
+      localStorage.setItem('user_info', JSON.stringify(userData));
+      localStorage.setItem('auth_token', userData.token);
+      setLoading(false);
+      return { success: true, user: userData };
+    } catch (error) {
+      setLoading(false);
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Verification failed'
+      };
+    }
+  };
+
+  const requestForgotPasswordOtp = async (email, captchaToken) => {
+    setLoading(true);
+    try {
+      const res = await axios.post('/api/auth/forgot-password/request-otp', {
+        email,
+        captchaToken
+      });
+      setLoading(false);
+      return { success: true, message: res.data.message };
+    } catch (error) {
+      setLoading(false);
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to request password reset code'
+      };
+    }
+  };
+
+  const resetPasswordWithOtp = async (email, otp, newPassword, confirmPassword) => {
+    setLoading(true);
+    try {
+      const res = await axios.post('/api/auth/forgot-password/reset-password', {
+        email,
+        otp,
+        newPassword,
+        confirmPassword
+      });
+      setLoading(false);
+      return { success: true, message: res.data.message };
+    } catch (error) {
+      setLoading(false);
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Password reset failed'
       };
     }
   };
@@ -116,6 +200,10 @@ export const AuthProvider = ({ children }) => {
         isAdmin: user?.role === 'admin',
         login,
         register,
+        requestSignupOtp,
+        verifySignupOtp,
+        requestForgotPasswordOtp,
+        resetPasswordWithOtp,
         logout,
         updateUserProfile,
         changePassword

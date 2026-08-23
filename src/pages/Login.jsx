@@ -57,7 +57,7 @@ export default function Login() {
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             Sign In
           </h2>
-          <p className="text-xs text-slate-400">Welcome to {storeConfig.navbarLogoText || 'LuxeStore'}</p>
+          <p className="text-xs text-slate-400">Welcome back to {storeConfig.navbarLogoText || 'LuxeStore'}</p>
         </div>
 
         {errorMsg && (
@@ -84,7 +84,15 @@ export default function Login() {
           </div>
 
           <div>
-            <label className="block text-slate-400 font-semibold mb-1">Password</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-slate-400 font-semibold">Password</label>
+              <Link
+                to="/forgot-password"
+                className="text-[11px] text-indigo-400 hover:text-indigo-300 hover:underline"
+              >
+                Forgot Password?
+              </Link>
+            </div>
             <div className="relative">
               <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
               <input

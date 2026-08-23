@@ -3,9 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useStore } from '../context/StoreContext';
 import { Sparkles, User, Mail, Lock, UserPlus, AlertCircle, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import TurnstileWidget from '../components/TurnstileWidget';
+import OtpModal from '../components/OtpModal';
 
 export default function Register() {
-  const { user, register, loading } = useAuth();
+  const { user, requestSignupOtp, verifySignupOtp, loading } = useAuth();
   const { storeConfig, activeTheme } = useStore();
   const navigate = useNavigate();
 
@@ -13,8 +15,14 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [existingAccount, setExistingAccount] = useState(false);
+
+  // OTP Modal State
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [otpVerifyLoading, setOtpVerifyLoading] = useState(false);
+  const [otpError, setOtpError] = useState('');
 
   const passwordRequirements = [
     { label: 'At least 8 characters', met: password.length >= 8 },
@@ -24,7 +32,7 @@ export default function Register() {
   ];
   const isStrongPassword = passwordRequirements.every((requirement) => requirement.met);
 
-  // If already authenticated, prevent accessing register page
+  // If already authenticated, redirect to home
   useEffect(() => {
     if (user) {
       navigate('/', { replace: true });
@@ -46,13 +54,36 @@ export default function Register() {
       return;
     }
 
-    // Role is strictly 'customer' by default as requested
-    const res = await register(name, email, password, 'customer');
+    // Request OTP from backend (validates fields, checks existing email, verifies Turnstile)
+    const res = await requestSignupOtp(name, email, password, confirmPassword, captchaToken);
     if (res.success) {
-      navigate('/');
+      setOtpError('');
+      setIsOtpModalOpen(true);
     } else {
       setErrorMsg(res.message);
       setExistingAccount(/already exists/i.test(res.message));
+    }
+  };
+
+  const handleVerifyOtp = async (otpCode) => {
+    setOtpVerifyLoading(true);
+    setOtpError('');
+
+    const res = await verifySignupOtp(name, email, password, otpCode);
+    setOtpVerifyLoading(false);
+
+    if (res.success) {
+      setIsOtpModalOpen(false);
+      navigate('/');
+    } else {
+      setOtpError(res.message);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    const res = await requestSignupOtp(name, email, password, confirmPassword, captchaToken);
+    if (!res.success) {
+      throw new Error(res.message);
     }
   };
 
@@ -79,7 +110,7 @@ export default function Register() {
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             Create Account
           </h2>
-          <p className="text-xs text-slate-400">Join {storeConfig.navbarLogoText || 'LuxeStore'} today</p>
+          <p className="text-xs text-slate-400">Join {storeConfig.navbarLogoText || 'LuxeStore'} today with verified email</p>
         </div>
 
         {errorMsg && (
@@ -180,13 +211,20 @@ export default function Register() {
             </div>
           </div>
 
+          {/* Cloudflare Turnstile CAPTCHA Widget */}
+          <TurnstileWidget
+            onSuccess={(token) => setCaptchaToken(token)}
+            onError={() => setCaptchaToken('')}
+            onExpire={() => setCaptchaToken('')}
+          />
+
           <button
             type="submit"
             disabled={loading || !isStrongPassword}
             className={`w-full py-3 rounded-xl ${activeTheme.primaryBtn} font-bold text-sm shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 transition-all`}
           >
             <UserPlus className="w-4 h-4" />
-            <span>{loading ? 'Creating Account...' : 'Register Account'}</span>
+            <span>{loading ? 'Sending Verification Code...' : 'Continue with Verification'}</span>
           </button>
         </form>
 
@@ -198,6 +236,20 @@ export default function Register() {
         </div>
 
       </div>
+
+      {/* 6-Digit Email OTP Verification Dialog */}
+      <OtpModal
+        isOpen={isOtpModalOpen}
+        onClose={() => setIsOtpModalOpen(false)}
+        email={email}
+        title="Verify Your Registration"
+        subtitle="We have sent a 6-digit code to"
+        onVerify={handleVerifyOtp}
+        onResend={handleResendOtp}
+        loading={otpVerifyLoading}
+        error={otpError}
+      />
+
     </div>
   );
 }

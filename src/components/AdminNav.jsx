@@ -10,7 +10,8 @@ import {
   Eye, 
   LogOut, 
   Sparkles,
-  ShieldAlert
+  CreditCard,
+  Truck
 } from 'lucide-react';
 
 export default function AdminNav() {
@@ -20,8 +21,10 @@ export default function AdminNav() {
 
   const navItems = [
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
-    { name: 'Products & Stock', path: '/admin/products', icon: Package },
+    { name: 'Payment AI Approvals', path: '/admin/payments', icon: CreditCard },
     { name: 'Customer Orders', path: '/admin/orders', icon: ShoppingBag },
+    { name: 'Products & Stock', path: '/admin/products', icon: Package },
+    { name: 'Shipping Rates', path: '/admin/shipping', icon: Truck },
     { name: 'Registered Users', path: '/admin/users', icon: Users },
     { name: 'Theme Customizer', path: '/admin/customize', icon: Palette },
   ];
@@ -48,7 +51,7 @@ export default function AdminNav() {
           </div>
 
           {/* Nav Tabs */}
-          <div className="hidden lg:flex items-center gap-2">
+          <div className="hidden lg:flex items-center gap-1.5 xl:gap-2">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -57,13 +60,13 @@ export default function AdminNav() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
                     isActive
                       ? 'bg-gradient-to-r from-pink-600 to-indigo-600 text-white shadow-lg shadow-indigo-500/20'
                       : 'text-slate-300 hover:text-white hover:bg-slate-900/60 border border-transparent hover:border-slate-800'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-3.5 h-3.5" />
                   <span>{item.name}</span>
                 </Link>
               );
@@ -80,7 +83,7 @@ export default function AdminNav() {
               className="flex items-center gap-2 p-2 sm:px-4 sm:py-2 rounded-xl text-xs font-bold bg-slate-900 border border-slate-700 text-slate-200 hover:text-white hover:border-slate-500 shadow-md transition-all hover:scale-105"
             >
               <Eye className="w-4 h-4 text-emerald-400" />
-              <span className="hidden md:inline">Customer Storefront View</span>
+              <span className="hidden md:inline">Customer View</span>
             </Link>
 
             {/* Logout Button */}

@@ -17,11 +17,14 @@ import AboutUs from './pages/AboutUs';
 import ContactUs from './pages/ContactUs';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminPayments from './pages/admin/AdminPayments';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminOrders from './pages/admin/AdminOrders';
+import AdminShipping from './pages/admin/AdminShipping';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminCustomize from './pages/admin/AdminCustomize';
 
@@ -77,7 +80,7 @@ export default function App() {
   const { authReady } = useAuth();
   const { loadingConfig } = useStore();
 
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/forgot-password';
   const isAdminPage = location.pathname.startsWith('/admin');
 
   // Store configuration controls the theme, navigation and page content. Do not
@@ -120,6 +123,14 @@ export default function App() {
               </PublicOnlyRoute>
             }
           />
+          <Route
+            path="/forgot-password"
+            element={
+              <PublicOnlyRoute>
+                <ForgotPassword />
+              </PublicOnlyRoute>
+            }
+          />
 
           {/* Protected Customer Routes: Checkout & Orders strictly require login */}
           <Route
@@ -157,6 +168,14 @@ export default function App() {
             }
           />
           <Route
+            path="/admin/payments"
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminPayments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin/products"
             element={
               <ProtectedRoute requireAdmin={true}>
@@ -169,6 +188,14 @@ export default function App() {
             element={
               <ProtectedRoute requireAdmin={true}>
                 <AdminOrders />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/shipping"
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminShipping />
               </ProtectedRoute>
             }
           />

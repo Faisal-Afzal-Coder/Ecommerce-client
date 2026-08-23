@@ -12,6 +12,7 @@
     "esbuild": true
   },
   "dependencies": {
+    "@marsidev/react-turnstile": "^1.6.0",
     "axios": "^1.6.8",
     "framer-motion": "^11.1.7",
     "lucide-react": "^0.368.0",
