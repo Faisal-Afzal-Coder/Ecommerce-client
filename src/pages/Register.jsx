@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useStore } from '../context/StoreContext';
 import { 
@@ -11,7 +12,9 @@ import {
   AlertCircle, 
   ArrowLeft, 
   CheckCircle2,
-  ArrowRight
+  ArrowRight,
+  LogIn,
+  KeyRound
 } from 'lucide-react';
 import TurnstileWidget from '../components/TurnstileWidget';
 
@@ -27,6 +30,7 @@ export default function Register() {
   const [captchaToken, setCaptchaToken] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [existingAccount, setExistingAccount] = useState(false);
+  const [checkingEmail, setCheckingEmail] = useState(false);
 
   const passwordRequirements = [
     { label: 'At least 8 characters', met: password.length >= 8 },
@@ -42,6 +46,32 @@ export default function Register() {
       navigate('/', { replace: true });
     }
   }, [user, navigate]);
+
+  // Real-time Email check when user finishes typing email
+  const handleEmailBlur = async () => {
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail || !cleanEmail.includes('@') || !cleanEmail.includes('.')) return;
+
+    try {
+      setCheckingEmail(true);
+      const res = await axios.get(`/api/auth/check-email?email=${encodeURIComponent(cleanEmail)}`, {
+        silentToast: true
+      });
+      setCheckingEmail(false);
+
+      if (res.data?.exists) {
+        setExistingAccount(true);
+        setErrorMsg('An account with this email is already registered.');
+      } else {
+        setExistingAccount(false);
+        if (errorMsg === 'An account with this email is already registered.') {
+          setErrorMsg('');
+        }
+      }
+    } catch (err) {
+      setCheckingEmail(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,20 +89,23 @@ export default function Register() {
     }
 
     // Request 6-digit OTP code from server
-    const res = await requestSignupOtp(name, email, password, confirmPassword, captchaToken);
+    const res = await requestSignupOtp(name, email.trim().toLowerCase(), password, confirmPassword, captchaToken);
     
     if (res.success) {
       // Direct navigation to dedicated /verify-otp page!
       navigate('/verify-otp', {
         state: {
-          name,
-          email,
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
           password
         }
       });
     } else {
       setErrorMsg(res.message);
-      setExistingAccount(/already exists/i.test(res.message));
+      setExistingAccount(
+        res.alreadyRegistered || 
+        /already exists|already registered/i.test(res.message)
+      );
     }
   };
 
@@ -103,19 +136,30 @@ export default function Register() {
         </div>
 
         {errorMsg && (
-          <div className="p-3.5 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-semibold flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>
-              {errorMsg}
-              {existingAccount && (
-                <>
-                  {' '}
-                  <Link to="/login" className="font-bold text-white underline underline-offset-2 hover:text-indigo-200">
-                    Sign in instead
-                  </Link>
-                </>
-              )}
-            </span>
+          <div className="p-4 rounded-2xl bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs space-y-2.5 animate-fade-in">
+            <div className="flex items-center gap-2 font-semibold">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+            
+            {existingAccount && (
+              <div className="flex items-center gap-2 pt-1 border-t border-rose-500/20">
+                <Link
+                  to="/login"
+                  className="flex-1 py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-center flex items-center justify-center gap-1.5 transition-all shadow-md"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>Sign In</span>
+                </Link>
+                <Link
+                  to="/forgot-password"
+                  className="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-center flex items-center justify-center gap-1.5 transition-all"
+                >
+                  <KeyRound className="w-3.5 h-3.5" />
+                  <span>Reset Password</span>
+                </Link>
+              </div>
+            )}
           </div>
         )}
 
@@ -143,11 +187,18 @@ export default function Register() {
                 type="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (existingAccount) setExistingAccount(false);
+                }}
+                onBlur={handleEmailBlur}
                 placeholder="you@example.com"
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white focus:outline-none focus:border-indigo-500"
               />
             </div>
+            {checkingEmail && (
+              <p className="text-[11px] text-slate-500 mt-1 animate-pulse">Checking email availability...</p>
+            )}
           </div>
 
           <div>
